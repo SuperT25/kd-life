@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>KD Life — Live Your Kaduna Story</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ═══════════════ LANDING ═══════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-bg">
+    <div class="landing-content">
+      <div class="logo-icon">🏙️</div>
+      <h1 class="game-title">KD <span>LIFE</span></h1>
+      <p class="game-tagline">Live Your Kaduna Story</p>
+      <div class="landing-btns">
+        <button class="btn-primary" onclick="UI.goTo('screen-create')">▶ Start New Life</button>
+        <button class="btn-secondary" onclick="if(GameState.load()){Engine.setPlayer(GameState.getChar().name,GameState.getChar().avatar);UI.goTo('screen-game')}else{UI.notify('No saved game found.')}">📂 Continue</button>
+      </div>
+      <div class="landing-chips">
+        <span class="chip">👤 Character</span>
+        <span class="chip">🏠 Housing</span>
+        <span class="chip">💼 Career</span>
+        <span class="chip">🎓 Education</span>
+        <span class="chip">💰 Finance</span>
+        <span class="chip">📱 Phone</span>
+        <span class="chip">💬 Chats</span>
+        <span class="chip">📈 Stocks</span>
+        <span class="chip">🏭 Business</span>
+      </div>
+      <p class="landing-footer">Made with ❤️ for Kaduna · Phase 1</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHARACTER CREATION ═══════════════ -->
+<div id="screen-create" class="screen">
+  <div class="create-container">
+    <div class="create-header">
+      <button class="btn-back" onclick="UI.goTo('screen-landing')">← Back</button>
+      <h2>Create Your Character</h2>
+      <p>Begin your life in Kaduna</p>
+    </div>
+    <div class="create-body">
+      <div class="section-card">
+        <h3>Choose Your Look</h3>
+        <div class="avatar-grid" id="avatarGrid"></div>
+      </div>
+      <div class="section-card">
+        <h3>Your Identity</h3>
+        <div class="form-row">
+          <label>Full Name</label>
+          <input type="text" id="charName" placeholder="e.g. Aminu Bello" maxlength="20"/>
+        </div>
+        <div class="form-row">
+          <label>Gender</label>
+          <div class="gender-btns">
+            <button class="gender-btn active" data-gender="male"   onclick="UI.selectGender(this)">👨 Male</button>
+            <button class="gender-btn"        data-gender="female" onclick="UI.selectGender(this)">👩 Female</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Starting Age</label>
+          <input type="number" id="charAge" value="18" min="16" max="25"/>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Your Background</h3>
+        <div class="bg-grid" id="bgGrid"></div>
+      </div>
+      <div class="section-card">
+        <h3>Personality Trait</h3>
+        <div class="trait-grid" id="traitGrid"></div>
+      </div>
+      <div class="section-card">
+        <h3>Life Goal</h3>
+        <div class="goal-grid" id="goalGrid"></div>
+      </div>
+      <button class="btn-primary btn-full" onclick="UI.startGame()">🚀 Begin My KD Life</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ GAME SCREEN ═══════════════ -->
+<div id="screen-game" class="screen">
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-left">
+      <div class="hud-avatar" id="hudAvatar">😊</div>
+      <div class="hud-info">
+        <div class="hud-name" id="hudName">Player</div>
+        <div class="hud-job"  id="hudJob">Unemployed</div>
+      </div>
+    </div>
+    <div class="hud-center">
+      <div class="hud-stat">💰<span id="statMoney">₦0</span></div>
+      <div class="hud-stat">📅<span id="statDay">Day 1</span></div>
+      <div class="hud-stat">⭐<span id="statRep">30</span></div>
+    </div>
+    <div class="hud-right">
+      <button class="phone-btn" onclick="UI.openPhone()">
+        📱<span id="phoneBadge" class="phone-badge" style="display:none">0</span>
+      </button>
+      <button class="btn-menu" onclick="UI.toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <!-- Stat bars -->
+  <div class="stats-bar">
+    <div class="stat-bar-item"><span>❤️</span><div class="bar-track"><div class="bar-fill bar-health" id="barHealth" style="width:100%"></div></div><span id="numHealth">100</span></div>
+    <div class="stat-bar-item"><span>⚡</span><div class="bar-track"><div class="bar-fill bar-energy" id="barEnergy" style="width:100%"></div></div><span id="numEnergy">100</span></div>
+    <div class="stat-bar-item"><span>😄</span><div class="bar-track"><div class="bar-fill bar-happy"  id="barHappy"  style="width:80%"></div></div><span id="numHappy">80</span></div>
+    <div class="stat-bar-item"><span>🧠</span><div class="bar-track"><div class="bar-fill bar-skill"  id="barSkill"  style="width:15%"></div></div><span id="numSkill">15</span></div>
+  </div>
+
+  <!-- Day progress bar -->
+  <div class="day-progress-bar">
+    <span class="day-prog-label">🌅</span>
+    <div class="day-prog-track"><div class="day-prog-fill" id="dayProgFill" style="width:0%"></div></div>
+    <span class="day-prog-label" id="seasonLabel">☀️ Dry</span>
+  </div>
+
+  <!-- Canvas world -->
+  <div class="canvas-wrapper">
+    <canvas id="gameCanvas"></canvas>
+    <div id="interactPrompt" class="interact-prompt hidden"><span id="interactText">Press E to enter</span></div>
+    <div class="time-label" id="timeLabel">🌅 Morning</div>
+    <div class="stat-age-label">🎂 <span id="statAge">18</span></div>
+  </div>
+
+  <!-- Mobile D-Pad -->
+  <div class="dpad">
+    <button class="dpad-btn dpad-up"    onpointerdown="Controls.press('up')"    onpointerup="Controls.release('up')"    onpointerleave="Controls.release('up')">▲</button>
+    <button class="dpad-btn dpad-left"  onpointerdown="Controls.press('left')"  onpointerup="Controls.release('left')"  onpointerleave="Controls.release('left')">◀</button>
+    <button class="dpad-btn dpad-center"></button>
+    <button class="dpad-btn dpad-right" onpointerdown="Controls.press('right')" onpointerup="Controls.release('right')" onpointerleave="Controls.release('right')">▶</button>
+    <button class="dpad-btn dpad-down"  onpointerdown="Controls.press('down')"  onpointerup="Controls.release('down')"  onpointerleave="Controls.release('down')">▼</button>
+  </div>
+  <button class="dpad-action" onpointerdown="Controls.interact()">E</button>
+
+  <!-- Quick bar -->
+  <div class="quick-bar">
+    <button onclick="Systems.run('sleepHome')">😴 Sleep</button>
+    <button onclick="Systems.run('buyFood')">🍲 Eat</button>
+    <button onclick="Systems.run('doWork')">💼 Work</button>
+    <button onclick="UI.openPhone()">📱 Phone</button>
+  </div>
+
+  <!-- In-game Ad Banner -->
+  <div id="adBanner" class="ad-banner hidden"></div>
+
+</div>
+
+<!-- ═══════════════ PHONE SCREEN ═══════════════ -->
+<div id="screen-phone" class="screen">
+  <div class="phone-shell">
+    <!-- Phone frame -->
+    <div class="phone-frame">
+      <div class="phone-notch">
+        <div class="phone-speaker"></div>
+      </div>
+      <div class="phone-screen-inner" id="phoneScreen">
+        <!-- Content injected by UI.showPhoneHome() -->
+      </div>
+      <div class="phone-home-bar" onclick="UI.showPhoneHome()"></div>
+    </div>
+    <!-- Close button outside phone -->
+    <button class="phone-close-btn" onclick="UI.closePhone()">✕ Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════ LOCATION SCREEN ═══════════════ -->
+<div id="screen-location" class="screen">
+  <div class="location-container">
+    <div class="location-header">
+      <button class="btn-back" onclick="UI.exitLocation()">← Back to City</button>
+      <div class="location-title-area">
+        <div class="location-icon" id="locIcon">🏪</div>
+        <h2 id="locName">Location</h2>
+        <p id="locDesc">Description</p>
+        <div class="loc-district" id="locDistrict">📍 District</div>
+      </div>
+    </div>
+    <div class="location-actions" id="locActions"></div>
+    <div class="location-log" id="locLog"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MENU OVERLAY ═══════════════ -->
+<div id="menuOverlay" class="menu-overlay hidden">
+  <div class="menu-box">
+    <h3>⚙️ Menu</h3>
+    <button onclick="GameState.save();UI.notify('💾 Saved!');UI.toggleMenu()">💾 Save Game</button>
+    <button onclick="UI.toggleMenu();UI.showStatsPanel()">📊 Life Stats</button>
+    <button onclick="UI.toggleMenu();UI.showJobPanel()">💼 Career</button>
+    <button onclick="UI.toggleMenu();UI.showHousingPanel('rent')">🏠 Housing</button>
+    <button onclick="UI.toggleMenu();UI.showBusinessPanel()">🏭 Business</button>
+    <button onclick="UI.toggleMenu();UI.showVehiclePanel()">🚗 Vehicles</button>
+    <button onclick="UI.toggleMenu();UI.showAchievementsPanel()">🏆 Achievements</button>
+    <button onclick="UI.triggerAd()">📺 Watch Ad (+₦)</button>
+    <button onclick="UI.resetGame()">🔄 New Game</button>
+    <button onclick="UI.toggleMenu()">✕ Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════ PANELS ═══════════════ -->
+<div id="jobPanel"       class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>💼 Career</h3><button onclick="UI.closePanel('jobPanel')">✕</button></div><div class="panel-scroll" id="jobPanelContent"></div></div></div>
+<div id="statsPanel"     class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>📊 Life Stats</h3><button onclick="UI.closePanel('statsPanel')">✕</button></div><div class="panel-scroll" id="statsPanelContent"></div></div></div>
+<div id="housingPanel"   class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🏠 Housing</h3><button onclick="UI.closePanel('housingPanel')">✕</button></div><div class="panel-scroll" id="housingPanelContent"></div></div></div>
+<div id="bizPanel"       class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🏭 Business</h3><button onclick="UI.closePanel('bizPanel')">✕</button></div><div class="panel-scroll" id="bizPanelContent"></div></div></div>
+<div id="shopPanel"      class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🛍️ Shop</h3><button onclick="UI.closePanel('shopPanel')">✕</button></div><div class="panel-scroll" id="shopPanelContent"></div></div></div>
+<div id="furniturePanel" class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🛋️ Furniture</h3><button onclick="UI.closePanel('furniturePanel')">✕</button></div><div class="panel-scroll" id="furniturePanelContent"></div></div></div>
+<div id="achPanel"       class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🏆 Achievements</h3><button onclick="UI.closePanel('achPanel')">✕</button></div><div class="panel-scroll" id="achPanelContent"></div></div></div>
+<div id="vehiclePanel"   class="panel-overlay hidden"><div class="panel-box"><div class="panel-header"><h3>🚗 Vehicles</h3><button onclick="UI.closePanel('vehiclePanel')">✕</button></div><div class="panel-scroll" id="vehiclePanelContent"></div></div></div>
+
+<!-- ═══════════════ EVENT MODAL ═══════════════ -->
+<div id="eventModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-icon" id="modalIcon">📢</div>
+    <h3 id="modalTitle">Event</h3>
+    <p id="modalText">Something happened.</p>
+    <button class="btn-primary" id="modalClose" onclick="UI.closeModal()">OK, Got it!</button>
+    <button class="btn-secondary" id="modalRestart" style="display:none;margin-top:.5rem;width:100%;padding:.7rem" onclick="UI.resetGame()">🔄 New Life</button>
+  </div>
+</div>
+
+<!-- ═══════════════ NOTIFICATION ═══════════════ -->
+<div id="notification" class="notification hidden"></div>
+
+<script src="data.js"></script>
+<script src="state.js"></script>
+<script src="systems.js"></script>
+<script src="ui.js"></script>
+<script src="engine.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => { UI.init(); });
+  window.addEventListener('keydown', e => {
+    if ((e.key==='p'||e.key==='P') && document.getElementById('screen-game')?.classList.contains('active')) {
+      UI.openPhone();
+    }
+  });
+</script>
+</body>
+</html>
